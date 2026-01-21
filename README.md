@@ -25,35 +25,50 @@ The interesting part isn't that it uses an LLM—it's *how* it uses one. Instead
 ## Architecture
 
 ```mermaid
-flowchart TB
-    subgraph API["FastAPI Server (api_server.py)"]
-        endpoint["/analyze endpoint"]
-    end
-    
-    subgraph Agent["Sentinel Agent (Google ADK + Gemini)"]
-        subgraph Tools["MCP Toolset"]
-            list["list_containers()"]
-            logs["get_logs()"]
-            restart["restart_service()"]
-        end
-        
-        subgraph Brain["SRE Brain (DSPy)"]
-            cot["Chain-of-Thought"]
-            trained["Trained on incidents"]
-            output["→ cause + action"]
-        end
-        
-        Tools <--> Brain
-    end
-    
-    subgraph Docker["Docker Daemon"]
-        containers["Your Containers"]
-    end
-    
-    API --> Agent
-    Tools --> Docker
-```
+%%{init: {"themeVariables": {"fontSize":"14px"}} }%%
+flowchart TD
 
+    classDef api fill:#ECF4FF,stroke:#5186C0,stroke-width:2px
+    classDef agent fill:#FFFCE4,stroke:#FCE303,stroke-width:2px
+    classDef mcp fill:#FFF3EA,stroke:#ED8728,stroke-width:2px
+    classDef brain fill:#F8E9FC,stroke:#C260A9,stroke-width:2px
+    classDef docker fill:#E1F6EA,stroke:#23B37A,stroke-width:2px
+    classDef llm fill:#E8F4FD,stroke:#4A90D9,stroke-width:2px
+
+    subgraph API[🌐 FastAPI Server]
+        A[api_server.py]
+    end
+    class API,A api
+
+    subgraph AGENT[🤖 Sentinel Agent]
+          direction LR
+          subgraph MCP[🔧 MCP Toolset]
+              
+              B1[list_containers]
+              B2[get_logs]
+              B3[restart_service]
+          end
+          class MCP,B1,B2,B3 mcp
+  
+          subgraph BRAIN[🧠 SRE Brain - DSPy]
+              
+              C1[Chain-of-Thought]
+              C2[Trained on incidents]
+              C3[cause + action]
+          end
+          class BRAIN,C1,C2,C3 brain
+    end
+    class AGENT agent
+
+    subgraph DOCKER[🐳 Docker Daemon]
+        D[Your Containers]
+    end
+    class DOCKER,D docker
+
+    A --> AGENT
+    BRAIN <--> MCP
+    MCP -.-> DOCKER
+```
 ---
 
 ## Features
