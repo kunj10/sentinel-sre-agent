@@ -1,0 +1,6 @@
+.venv/
+.env
+.deepeval/
+uv.lock
+__pycache__
+modules/brain_compiled.json
