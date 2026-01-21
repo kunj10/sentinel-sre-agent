@@ -24,31 +24,34 @@ The interesting part isn't that it uses an LLM—it's *how* it uses one. Instead
 
 ## Architecture
 
-┌─────────────────────────────────────────────────────────────┐
-│                      FastAPI Server                         │
-│                     (api_server.py)                         │
-└────────────────────────────┬────────────────────────────────┘
-                             │
-                             ▼
-┌─────────────────────────────────────────────────────────────┐
-│                     Sentinel Agent                          │
-│                  (Google ADK + Gemini)                      │
-│                                                             │
-│  ┌──────────────────┐      ┌──────────────────────────────┐ │
-│  │   MCP Toolset    │      │      SRE Brain (DSPy)        │ │
-│  │                  │      │                              │ │
-│  │ • list_containers│      │ • Chain-of-Thought reasoning │ │
-│  │ • get_logs       │◄────►│ • Trained on incident data   │ │
-│  │ • restart_service│      │ • Outputs: cause + action    │ │
-│  │                  │      │                              │ │
-│  └────────┬─────────┘      └──────────────────────────────┘ │
-└───────────┼─────────────────────────────────────────────────┘
-            │
-            ▼
-┌─────────────────────────────────────────────────────────────┐
-│                      Docker Daemon                          │
-│                    (Your containers)                        │
-└─────────────────────────────────────────────────────────────┘
+```mermaid
+flowchart TB
+    subgraph API["FastAPI Server (api_server.py)"]
+        endpoint["/analyze endpoint"]
+    end
+    
+    subgraph Agent["Sentinel Agent (Google ADK + Gemini)"]
+        subgraph Tools["MCP Toolset"]
+            list["list_containers()"]
+            logs["get_logs()"]
+            restart["restart_service()"]
+        end
+        
+        subgraph Brain["SRE Brain (DSPy)"]
+            cot["Chain-of-Thought"]
+            trained["Trained on incidents"]
+            output["→ cause + action"]
+        end
+        
+        Tools <--> Brain
+    end
+    
+    subgraph Docker["Docker Daemon"]
+        containers["Your Containers"]
+    end
+    
+    API --> Agent
+    Tools --> Docker
 ```
 
 ---
@@ -102,7 +105,7 @@ sentinel/
 ├── pyproject.toml
 └── requirements.txt
 ```
----
+
 
 ## How It Works
 
