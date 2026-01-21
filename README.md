@@ -24,17 +24,16 @@ The interesting part isn't that it uses an LLM—it's *how* it uses one. Instead
 
 ## Architecture
 
-```
 ┌─────────────────────────────────────────────────────────────┐
-│                        FastAPI Server                        │
-│                     (api_server.py)                          │
-└─────────────────────────┬───────────────────────────────────┘
-                          │
-                          ▼
+│                      FastAPI Server                         │
+│                     (api_server.py)                         │
+└────────────────────────────┬────────────────────────────────┘
+                             │
+                             ▼
 ┌─────────────────────────────────────────────────────────────┐
-│                     Sentinel Agent                           │
-│                  (Google ADK + Gemini)                       │
-│                                                              │
+│                     Sentinel Agent                          │
+│                  (Google ADK + Gemini)                      │
+│                                                             │
 │  ┌──────────────────┐      ┌──────────────────────────────┐ │
 │  │   MCP Toolset    │      │      SRE Brain (DSPy)        │ │
 │  │                  │      │                              │ │
@@ -47,8 +46,8 @@ The interesting part isn't that it uses an LLM—it's *how* it uses one. Instead
             │
             ▼
 ┌─────────────────────────────────────────────────────────────┐
-│                      Docker Daemon                           │
-│                   (Your containers)                          │
+│                      Docker Daemon                          │
+│                    (Your containers)                        │
 └─────────────────────────────────────────────────────────────┘
 ```
 
